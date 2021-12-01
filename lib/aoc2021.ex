@@ -1,18 +1,11 @@
 defmodule Aoc2021 do
-  @moduledoc """
-  Documentation for `Aoc2021`.
-  """
-
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> Aoc2021.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def input_for(day) do
+    path =
+      Path.join([
+        "priv",
+        "inputs",
+        day
+      ])
+    File.read!(path)
   end
 end
