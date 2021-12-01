@@ -1,21 +1,9 @@
 # Aoc2021
 
-**TODO: Add description**
+To generate boilerplate for a new day of AoC run `mix aoc.gen <day>`.
+This will generate a skeleton for the solution, the tests and the mix task to run it.
 
-## Installation
+Run tests with `mix test`.
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `aoc2021` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:aoc2021, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/aoc2021](https://hexdocs.pm/aoc2021).
+Run the solution eg. for day 1 with `mix aoc.day1`.
 
