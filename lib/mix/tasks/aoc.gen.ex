@@ -13,11 +13,11 @@ defmodule Mix.Tasks.Aoc.Gen do
   embed_template(:solution, """
   defmodule Aoc2021.Day<%= @day %> do
     def part1(input) do
-      input
+      nil
     end
 
     def part2(input) do
-      input
+      nil
     end
   end
   """)
