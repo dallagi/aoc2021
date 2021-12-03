@@ -6,16 +6,10 @@ defmodule Aoc2021.Day3 do
       |> List.first()
       |> String.length()
 
-    input_len = input
-      |> parse()
-      |> Enum.count()
-
     gamma_rate =
       input
       |> parse()
-      |> group_digits()
-      |> Enum.map(&Tuple.sum/1)
-      |> Enum.map(fn ones_count -> if ones_count > input_len / 2, do: 1, else: 0 end)
+      |> most_frequent_digits()
       |> Enum.join("")
       |> String.to_integer(2)
 
@@ -25,7 +19,54 @@ defmodule Aoc2021.Day3 do
   end
 
   def part2(input) do
-    nil
+    input = parse(input)
+
+    digits_count =
+      input
+      |> List.first()
+      |> String.length()
+
+    numbers =
+      input
+      |> Enum.map(fn number ->
+        number
+        |> String.graphemes()
+        |> Enum.map(&String.to_integer/1)
+      end)
+
+    oxygen_generator_rating =
+      0..digits_count
+      |> Enum.reduce_while(
+        numbers,
+        fn
+          _idx, [number] ->
+            {:halt, number}
+
+          idx, numbers ->
+            mfd = most_frequent_digits(Enum.map(numbers, &Enum.join(&1, "")))
+            {:cont, Enum.filter(numbers, fn s -> Enum.at(s, idx) == Enum.at(mfd, idx) end)}
+        end
+      )
+      |> Enum.join("")
+      |> String.to_integer(2)
+
+    co2_scrubber_rating =
+      0..digits_count
+      |> Enum.reduce_while(
+        numbers,
+        fn
+          _idx, [number] ->
+            {:halt, number}
+
+          idx, numbers ->
+            mfd = most_frequent_digits(Enum.map(numbers, &Enum.join(&1, ""))) |> Enum.map(&(1 - &1))
+            {:cont, Enum.filter(numbers, fn s -> Enum.at(s, idx) == Enum.at(mfd, idx) end)}
+        end
+      )
+      |> Enum.join("")
+      |> String.to_integer(2)
+
+      oxygen_generator_rating * co2_scrubber_rating
   end
 
   defp parse(input) do
@@ -41,5 +82,14 @@ defmodule Aoc2021.Day3 do
       |> Enum.map(&String.to_integer/1)
     end)
     |> Enum.zip()
+  end
+
+  defp most_frequent_digits(binaries) do
+    input_len = Enum.count(binaries)
+
+    binaries
+    |> group_digits()
+    |> Enum.map(&Tuple.sum/1)
+    |> Enum.map(fn ones_count -> if ones_count >= input_len / 2, do: 1, else: 0 end)
   end
 end
