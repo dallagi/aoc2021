@@ -15,7 +15,39 @@ defmodule Aoc2021.Day4 do
   end
 
   def part2(input) do
-    nil
+    {all_numbers, boards} = parse(input)
+
+    boards = Enum.map(boards, &build_board/1)
+
+    {_, last_winning_board, _} =
+      Enum.reduce(
+        all_numbers,
+        {MapSet.new(), [], boards},
+        fn number, {numbers, last_winning_board, remaining_boards} ->
+          numbers = MapSet.put(numbers, number)
+          winning_boards = Enum.filter(remaining_boards, &winning_board?(&1, numbers))
+
+          case winning_boards do
+            [] ->
+              {numbers, last_winning_board, remaining_boards}
+
+            boards ->
+              board_info = %{
+                board: List.first(boards),
+                marked_numbers: numbers,
+                last_marked_number: number
+              }
+
+              {numbers, board_info, Enum.reject(remaining_boards, &(&1 in winning_boards))}
+          end
+        end
+      )
+
+    score(
+      last_winning_board.board,
+      last_winning_board.marked_numbers,
+      last_winning_board.last_marked_number
+    )
   end
 
   defp winning_board?(%{winning_sets: winning_sets} = _board, numbers) do
@@ -23,10 +55,11 @@ defmodule Aoc2021.Day4 do
   end
 
   defp score(%{numbers: board_numbers} = _board, marked_numbers, last_marked_number) do
-    sum_of_unmarked_numbers = board_numbers
-      |> Enum.reject(&(MapSet.member?(marked_numbers, &1)))
+    sum_of_unmarked_numbers =
+      board_numbers
+      |> Enum.reject(&MapSet.member?(marked_numbers, &1))
       |> Enum.map(&String.to_integer/1)
-      |> Enum.sum
+      |> Enum.sum()
 
     sum_of_unmarked_numbers * String.to_integer(last_marked_number)
   end
