@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Aoc.Gen do
 
   def run(args) do
     day = Enum.at(args, 0)
-    
+
     create_file(Path.join(["lib", "aoc2021", "day#{day}.ex"]), solution_template(day: day))
     create_file(Path.join(["test", "aoc2021", "day#{day}_test.exs"]), test_template(day: day))
     create_file(Path.join(["lib", "mix", "tasks", "aoc.day#{day}.ex"]), task_template(day: day))

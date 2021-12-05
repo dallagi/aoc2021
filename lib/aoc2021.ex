@@ -6,6 +6,7 @@ defmodule Aoc2021 do
         "inputs",
         day
       ])
+
     File.read!(path)
   end
 end
