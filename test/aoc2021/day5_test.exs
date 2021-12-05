@@ -19,6 +19,6 @@ defmodule Aoc2021.Day5Test do
   end
 
   test "solves part2 for provided example" do
-    # assert nil == Aoc2021.Day5.part2(@example_input)
+    assert 12 == Aoc2021.Day5.part2(@example_input)
   end
 end

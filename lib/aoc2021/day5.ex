@@ -2,27 +2,32 @@ defmodule Aoc2021.Day5 do
   def part1(input) do
     input
     |> parse
-    |> build_diagram()
+    |> build_diagram(false)
     |> Enum.count(fn {_coord, count} -> count > 1 end)
   end
 
   def part2(input) do
-    nil
+    input
+    |> parse
+    |> build_diagram(true)
+    |> Enum.count(fn {_coord, count} -> count > 1 end)
   end
 
-  defp build_diagram(lines) do
-    # %{ {x, y} => 1 }
-    lines
-    |> Enum.flat_map(&touched_points/1)
-    |> Enum.reduce(
-      %{},
-      fn line, diagram -> Map.update(diagram, line, 1, &(&1 + 1)) end
-    )
+  defp build_diagram(lines, include_diagonals?) do
+    touched_points = Enum.flat_map(lines, &touched_points(&1, include_diagonals?))
+
+    Enum.reduce(touched_points, %{}, fn line, diagram ->
+      Map.update(diagram, line, 1, &(&1 + 1))
+    end)
   end
 
-  defp touched_points({{x, from_y}, {x, to_y}}), do: Enum.map(from_y..to_y, &({x, &1}))
-  defp touched_points({{from_x, y}, {to_x, y}}), do: Enum.map(from_x..to_x, &({&1, y}))
-  defp touched_points(_), do: []
+  def touched_points({{x, from_y}, {x, to_y}}, _), do: Enum.map(from_y..to_y, &{x, &1})
+  def touched_points({{from_x, y}, {to_x, y}}, _), do: Enum.map(from_x..to_x, &{&1, y})
+
+  def touched_points({{from_x, from_y}, {to_x, to_y}}, true),
+    do: Enum.zip(from_x..to_x, from_y..to_y)
+
+  def touched_points(_, false), do: []
 
   defp parse(input) do
     input
