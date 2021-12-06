@@ -8,6 +8,6 @@ defmodule Aoc2021.Day6Test do
   end
 
   test "solves part2 for provided example" do
-    # assert nil == Aoc2021.Day6.part2(@example_input)
+    assert 26984457539 == Aoc2021.Day6.part2(@example_input)
   end
 end
