@@ -1,14 +1,25 @@
 defmodule Aoc2021.Day7 do
   def part1(input) do
-    numbers = parse(input)
+    positions = parse(input)
+    {min_pos, max_pos} = Enum.min_max(positions)
 
-    numbers
-    |> Enum.map(fn num -> numbers |> Enum.map(&abs(&1 - num)) |> Enum.sum() end)
+    min_pos..max_pos
+    |> Enum.map(fn pos -> positions |> Enum.map(&abs(&1 - pos)) |> Enum.sum() end)
     |> Enum.min()
   end
 
   def part2(input) do
-    nil
+    positions = parse(input)
+    {min_pos, max_pos} = Enum.min_max(positions)
+
+    min_pos..max_pos
+    |> Enum.map(fn pos -> positions |> Enum.map(&aligning_cost(&1, pos)) |> Enum.sum() end)
+    |> Enum.min()
+  end
+
+  defp aligning_cost(from, to) do
+    distance = abs(to - from)
+    round(distance * (distance + 1) / 2)
   end
 
   defp parse(input) do
