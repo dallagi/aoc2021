@@ -1,5 +1,4 @@
 defmodule Aoc2021.Day10 do
-  @delimiters %{"(" => ")", "{" => "}", "<" => ">", "[" => "]"}
   @opening_delimiters ~w"( [ { <"
   @closing_delimiters ~w") ] } >"
 
@@ -29,7 +28,7 @@ defmodule Aoc2021.Day10 do
         check_line(rest, [delimiter | open_delimiters])
 
       [delimiter | rest] when delimiter in @closing_delimiters ->
-        if Enum.empty?(open_delimiters) or delimiter != @delimiters[hd(open_delimiters)] do
+        if Enum.empty?(open_delimiters) or delimiter != closing_delimiter(hd(open_delimiters)) do
           {:syntax_error, delimiter}
         else
           check_line(rest, tl(open_delimiters))
@@ -37,13 +36,18 @@ defmodule Aoc2021.Day10 do
     end
   end
 
+  defp closing_delimiter("("), do: ")"
+  defp closing_delimiter("{"), do: "}"
+  defp closing_delimiter("["), do: "]"
+  defp closing_delimiter("<"), do: ">"
+
   defp syntax_score({:syntax_error, ")"}), do: 3
   defp syntax_score({:syntax_error, "]"}), do: 57
   defp syntax_score({:syntax_error, "}"}), do: 1197
   defp syntax_score({:syntax_error, ">"}), do: 25137
   defp syntax_score(_), do: 0
 
-  def autocomplete_score({:incomplete, open_delimiters}) do
+  defp autocomplete_score({:incomplete, open_delimiters}) do
     value = %{"(" => 1, "[" => 2, "{" => 3, "<" => 4}
 
     Enum.reduce(open_delimiters, 0, fn delimiter, score ->
@@ -51,7 +55,7 @@ defmodule Aoc2021.Day10 do
     end)
   end
 
-  def autocomplete_score(_), do: 0
+  defp autocomplete_score(_), do: 0
 
   defp median(enumerable) do
     idx = div(length(enumerable), 2)
