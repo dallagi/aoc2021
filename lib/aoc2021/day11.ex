@@ -6,7 +6,9 @@ defmodule Aoc2021.Day11 do
   end
 
   def part2(input) do
-    nil
+    input
+    |> parse()
+    |> first_synchronized_step()
   end
 
   defp count_flashes(octopuses, steps, flashes_so_far \\ 0)
@@ -17,6 +19,13 @@ defmodule Aoc2021.Day11 do
     flashes = new_octopuses |> Map.values() |> Enum.count(&(&1 == 0))
 
     count_flashes(new_octopuses, steps - 1, flashes_so_far + flashes)
+  end
+
+  defp first_synchronized_step(octopuses, step \\ 1) do
+    new_octopuses = step(octopuses)
+    all_flashing? = new_octopuses |> Map.values |> Enum.all?(& &1 == 0)
+
+    if all_flashing?, do: step, else: first_synchronized_step(new_octopuses, step+1)
   end
 
   defp step(octopuses) do
