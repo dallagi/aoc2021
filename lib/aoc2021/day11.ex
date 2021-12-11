@@ -23,9 +23,9 @@ defmodule Aoc2021.Day11 do
 
   defp first_synchronized_step(octopuses, step \\ 1) do
     new_octopuses = step(octopuses)
-    all_flashing? = new_octopuses |> Map.values |> Enum.all?(& &1 == 0)
+    all_flashing? = new_octopuses |> Map.values() |> Enum.all?(&(&1 == 0))
 
-    if all_flashing?, do: step, else: first_synchronized_step(new_octopuses, step+1)
+    if all_flashing?, do: step, else: first_synchronized_step(new_octopuses, step + 1)
   end
 
   defp step(octopuses) do
@@ -35,8 +35,10 @@ defmodule Aoc2021.Day11 do
   end
 
   defp propagate_flashes(octopuses) do
-    to_flash = octopuses |> Map.filter(fn {_pos, energy} -> energy > 9 end) |> Map.keys()
-    close_to_flashing = neighbors(to_flash)
+    to_flash =
+      octopuses |> Map.filter(fn {_pos, energy} -> energy > 9 end) |> Map.keys() |> MapSet.new()
+
+    close_to_flashing = neighbors(to_flash) |> Enum.frequencies()
 
     new_octopuses =
       Map.map(octopuses, fn
@@ -44,7 +46,7 @@ defmodule Aoc2021.Day11 do
           cond do
             energy == 0 -> 0
             pos in to_flash -> 0
-            true -> energy + Enum.count(close_to_flashing, &(&1 == pos))
+            true -> energy + Map.get(close_to_flashing, pos, 0)
           end
       end)
 
