@@ -54,12 +54,11 @@ defmodule Aoc2021.Day11 do
   end
 
   defp neighbors(positions) do
-    Enum.flat_map(positions, fn {x, y} ->
-      for nx <- (x - 1)..(x + 1),
-          ny <- (y - 1)..(y + 1),
-          {x, y} != {nx, ny},
-          do: {nx, ny}
-    end)
+    for {x, y} <- positions,
+        nx <- (x - 1)..(x + 1),
+        ny <- (y - 1)..(y + 1),
+        {x, y} != {nx, ny},
+        do: {nx, ny}
   end
 
   defp print(octopuses) do
@@ -74,11 +73,9 @@ defmodule Aoc2021.Day11 do
   end
 
   defp parse(input) do
-    octopuses =
-      for {row, y} <- input |> String.split("\n", trim: true) |> Enum.with_index(),
-          {elem, x} <- row |> String.split("", trim: true) |> Enum.with_index(),
-          do: {{x, y}, String.to_integer(elem)}
-
-    Enum.into(octopuses, %{})
+    for {row, y} <- input |> String.split("\n", trim: true) |> Enum.with_index(),
+        {elem, x} <- row |> String.split("", trim: true) |> Enum.with_index(),
+        into: %{},
+        do: {{x, y}, String.to_integer(elem)}
   end
 end
