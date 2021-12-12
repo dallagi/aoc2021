@@ -45,7 +45,7 @@ defmodule Aoc2021.Day12 do
     |> Enum.sum()
   end
 
-  defp small_cave?(cave), do: cave =~ ~r/[a-z]+/
+  defp small_cave?(cave), do: cave == String.downcase(cave)
 
   defp parse(input) do
     for row <- String.split(input, "\n", trim: true), reduce: %{} do
