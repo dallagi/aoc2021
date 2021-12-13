@@ -15,7 +15,7 @@ defmodule Aoc2021.Day13 do
     |> print()
   end
 
-  def fold(dots, {axis, value} = _fold_line) do
+  defp fold(dots, {axis, value} = _fold_line) do
     case axis do
       :x ->
         for {x, y} <- dots,
@@ -50,7 +50,7 @@ defmodule Aoc2021.Day13 do
     {dots, folds}
   end
 
-  def print(dots) do
+  defp print(dots) do
     max_x = elem(Enum.max_by(dots, fn {x, _y} -> x end), 0)
     max_y = elem(Enum.max_by(dots, fn {_x, y} -> y end), 1)
 
