@@ -48,10 +48,10 @@ defmodule Aoc2021.Day12 do
   defp small_cave?(cave), do: cave == String.downcase(cave)
 
   defp parse(input) do
-    for row <- String.split(input, "\n", trim: true), reduce: %{} do
+    for row <- String.split(input, "\n", trim: true),
+        [from, to] = String.split(row, "-", parts: 2),
+        reduce: %{} do
       connections ->
-        [from, to] = String.split(row, "-", parts: 2)
-
         connections
         |> Map.update(from, [to], fn dests -> [to | dests] end)
         |> Map.update(to, [from], fn dests -> [from | dests] end)

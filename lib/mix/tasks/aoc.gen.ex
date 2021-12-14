@@ -26,14 +26,16 @@ defmodule Mix.Tasks.Aoc.Gen do
   defmodule Aoc2021.Day<%= @day %>Test do
     use ExUnit.Case, async: true
 
+    alias Aoc2021.Day<%= @day %>
+
     @example_input ""
 
     test "solves part1 for provided example" do
-      # assert nil == Aoc2021.Day<%= @day %>.part1(@example_input)
+      # assert nil == Day<%= @day %>.part1(@example_input)
     end
 
     test "solves part2 for provided example" do
-      # assert nil == Aoc2021.Day<%= @day %>.part2(@example_input)
+      # assert nil == Day<%= @day %>.part2(@example_input)
     end
   end
   """)

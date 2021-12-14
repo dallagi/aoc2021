@@ -1,8 +1,6 @@
 defmodule Aoc2021.Day13Test do
   use ExUnit.Case, async: true
 
-  alias Aoc2021.Day13
-
   @example_input """
   6,10
   0,14
