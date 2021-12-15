@@ -1,9 +1,5 @@
 defmodule Aoc2021.Day15 do
-  @cache __MODULE__.Cache
-
   def part1(input) do
-    IO.puts("Starting...")
-    cache = Agent.start_link(fn -> %{} end, name: @cache)
     map = parse(input)
     target = bottom_right_corner(map)
 
@@ -11,16 +7,22 @@ defmodule Aoc2021.Day15 do
   end
 
   def part2(input) do
-    nil
+    map = parse(input)
+    {max_x, max_y} = target = bottom_right_corner(map)
+
+    new_map = enlarge(map, max_x, max_y)
+
+    target = bottom_right_corner(new_map)
+    dijkstra(new_map, {0, 0}, target)
   end
 
-  def dijkstra(map, source, target) do
+  defp dijkstra(map, source, target) do
     to_visit = :gb_sets.singleton({0, source})
 
     dijkstra(map, source, target, to_visit, MapSet.new())
   end
 
-  def dijkstra(map, source, target, to_visit, visited) do
+  defp dijkstra(map, source, target, to_visit, visited) do
     {{dist, node}, to_visit} = :gb_sets.take_smallest(to_visit)
 
     if node == target do
@@ -29,12 +31,13 @@ defmodule Aoc2021.Day15 do
       visited = MapSet.put(visited, node)
 
       to_visit =
-        for neighbor <- neighbors_for(map, node, target),
+        for neighbor <- neighbors_for(node, target),
             neighbor not in visited,
             priority = map[neighbor] + dist,
             reduce: to_visit do
           to_visit -> :gb_sets.add_element({priority, neighbor}, to_visit)
         end
+
       dijkstra(map, source, target, to_visit, visited)
     end
   end
@@ -45,7 +48,7 @@ defmodule Aoc2021.Day15 do
     {max_x, max_y}
   end
 
-  def neighbors_for(map, {x, y}, target) do
+  defp neighbors_for({x, y}, target) do
     adjacent_deltas = [{0, -1}, {-1, 0}, {0, 1}, {1, 0}]
     {max_x, max_y} = target
 
@@ -55,10 +58,40 @@ defmodule Aoc2021.Day15 do
         do: {new_x, new_y}
   end
 
-  def parse(input) do
+  defp enlarge(map, max_x, max_y) do
+    for x_factor <- 0..4,
+        y_factor <- 0..4,
+        reduce: map do
+      new_map ->
+        Map.merge(new_map, enlarged(map, x_factor, y_factor, max_x, max_y))
+    end
+  end
+
+  defp enlarged(map, x_factor, y_factor, max_x, max_y) do
+    for {{x, y}, risk} <- map, into: %{} do
+      new_x = x + x_factor * (max_x + 1)
+      new_y = y + y_factor * (max_y + 1)
+      new_risk = risk + x_factor + y_factor
+      new_risk = if new_risk <= 9, do: new_risk, else: new_risk - 9
+
+      {{new_x, new_y}, new_risk}
+    end
+  end
+
+  defp parse(input) do
     for {row, y} <- input |> String.split("\n", trim: true) |> Enum.with_index(),
         {elem, x} <- row |> String.split("", trim: true) |> Enum.with_index(),
         into: %{},
         do: {{x, y}, String.to_integer(elem)}
   end
+
+  #   defp print(map, max_x, max_y) do
+  #     for y <- 0..max_y,
+  #         x <- 0..max_x do
+  #       IO.write(map[{x, y}])
+  #       if x == max_x, do: IO.puts("")
+  #     end
+
+  #     map
+  #   end
 end
