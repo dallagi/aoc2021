@@ -39,12 +39,25 @@ defmodule Aoc2021.Day16 do
     {decode_packets(payload), rest}
   end
 
+  defp decode_operator(<<1::size(1), subpackets_count::size(11), rest::bits>>) do
+    decode_n_packets(rest, subpackets_count)
+  end
+
   defp decode_packets(payload, accumulator \\ []) do
     {packet_chunk, rest} = decode(payload)
     if packet_chunk != nil do
       decode_packets(rest, [packet_chunk | accumulator])
     else
       Enum.reverse(accumulator)
+    end
+  end
+
+  defp decode_n_packets(payload, count, accumulator \\ []) do
+    if count == 0 do
+      {Enum.reverse(accumulator), payload}
+    else
+      {packet_chunk, rest} = decode(payload)
+      decode_n_packets(rest, count - 1, [packet_chunk | accumulator])
     end
   end
 
