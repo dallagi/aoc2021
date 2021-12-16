@@ -5,7 +5,8 @@ defmodule Aoc2021.Day16 do
   end
 
   def part2(input) do
-    nil
+    {decoded, _} = input |> String.trim() |> Base.decode16!() |> decode()
+    eval_program(decoded)
   end
 
   @literal_type 4
@@ -68,6 +69,49 @@ defmodule Aoc2021.Day16 do
     <<int_result::integer-size(size)>> = bitstring
 
     int_result
+  end
+
+  defp eval_program({:literal, _, value}) do
+    value
+  end
+
+  defp eval_program({:operator, _, 0 = _sum, payload}) do
+    payload
+    |> Enum.map(&eval_program(&1))
+    |> Enum.reduce(&Kernel.+/2)
+  end
+
+  defp eval_program({:operator, _, 1 = _product, payload}) do
+    payload
+    |> Enum.map(&eval_program(&1))
+    |> Enum.reduce(&Kernel.*/2)
+  end
+
+  defp eval_program({:operator, _, 2 = _min, payload}) do
+    payload
+    |> Enum.map(&eval_program(&1))
+    |> Enum.reduce(&Kernel.min/2)
+  end
+
+  defp eval_program({:operator, _, 3 = _max, payload}) do
+    payload
+    |> Enum.map(&eval_program(&1))
+    |> Enum.reduce(&Kernel.max/2)
+  end
+
+  defp eval_program({:operator, _, 5 = _gt, payload}) do
+    [op1, op2] = for packet <- payload, do: eval_program(packet)
+    if op1 > op2, do: 1, else: 0
+  end
+
+  defp eval_program({:operator, _, 6 = _lt, payload}) do
+    [op1, op2] = for packet <- payload, do: eval_program(packet)
+    if op1 < op2, do: 1, else: 0
+  end
+
+  defp eval_program({:operator, _, 7 = _eq, payload}) do
+    [op1, op2] = for packet <- payload, do: eval_program(packet)
+    if op1 == op2, do: 1, else: 0
   end
 
   defp version_numbers_sum(packet, accumulator \\ 0) do
