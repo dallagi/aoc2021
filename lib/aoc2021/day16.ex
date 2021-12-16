@@ -9,9 +9,17 @@ defmodule Aoc2021.Day16 do
 
   @literal_type 4
 
-  def decode(<<version::size(3), @literal_type::size(3), payload::bits>>) do
-    {:literal, version, decode_literal(payload)}
+  def decode(<<version::size(3), @literal_type::size(3), rest::bits>>) do
+    {literal_payload, rest} = decode_literal(rest)
+    {{:literal, version, literal_payload}, rest}
   end
+
+  def decode(<<version::size(3), operator_type::size(3), rest::bits>>) do
+    {operator_payload, rest} = decode_operator(rest)
+    {{:operator, version, operator_type, operator_payload}, rest}
+  end
+
+  def decode(_), do: {nil, nil}
 
   defp decode_literal(payload, accumulator \\ <<>>)
 
@@ -20,11 +28,30 @@ defmodule Aoc2021.Day16 do
     decode_literal(payload, acc)
   end
 
-  defp decode_literal(<<0::size(1), elem::bits-size(4), _padding::bits>>, accumulator) do
-    result = <<accumulator::bits, elem::bits-size(4)>>
-    result_bit_size = bit_size(result)
-    <<result_as_number::integer-size(result_bit_size)>> = result
+  defp decode_literal(<<0::size(1), elem::bits-size(4), rest::bits>>, accumulator) do
+    result = bitstring_to_integer(<<accumulator::bits, elem::bits-size(4)>>)
+    {result, rest}
+  end
 
-    result_as_number
+  defp decode_operator(payload)
+
+  defp decode_operator(<<0::size(1), length::size(15), payload::bits-size(length), rest::bits>>) do
+    {decode_packets(payload), rest}
+  end
+
+  defp decode_packets(payload, accumulator \\ []) do
+    {packet_chunk, rest} = decode(payload)
+    if packet_chunk != nil do
+      decode_packets(rest, [packet_chunk | accumulator])
+    else
+      Enum.reverse(accumulator)
+    end
+  end
+
+  defp bitstring_to_integer(bitstring) do
+    size = bit_size(bitstring)
+    <<int_result::integer-size(size)>> = bitstring
+
+    int_result
   end
 end

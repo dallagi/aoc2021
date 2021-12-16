@@ -14,6 +14,11 @@ defmodule Aoc2021.Day16Test do
   end
 
   test "decodes literal value" do
-    assert {:literal, 6, 2021} == "D2FE28" |> Base.decode16!() |> Day16.decode()
+    assert {{:literal, 6, 2021}, _} = "D2FE28" |> Base.decode16!() |> Day16.decode()
+  end
+
+  test "decodes operator" do
+    assert {{:operator, 1, 6, [{:literal, _, 10}, {:literal, _, 20}]}, _} =
+             "38006F45291200" |> Base.decode16!() |> Day16.decode()
   end
 end
