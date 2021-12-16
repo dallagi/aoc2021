@@ -1,6 +1,7 @@
 defmodule Aoc2021.Day16 do
   def part1(input) do
-    nil
+    {decoded, _} = input |> String.trim() |> Base.decode16!() |> decode()
+    version_numbers_sum(decoded)
   end
 
   def part2(input) do
@@ -45,6 +46,7 @@ defmodule Aoc2021.Day16 do
 
   defp decode_packets(payload, accumulator \\ []) do
     {packet_chunk, rest} = decode(payload)
+
     if packet_chunk != nil do
       decode_packets(rest, [packet_chunk | accumulator])
     else
@@ -66,5 +68,16 @@ defmodule Aoc2021.Day16 do
     <<int_result::integer-size(size)>> = bitstring
 
     int_result
+  end
+
+  defp version_numbers_sum(packet, accumulator \\ 0) do
+    case packet do
+      {:literal, vsn, _} ->
+        vsn
+
+      {:operator, vsn, _, subpackets} ->
+        subpackets_vsn_sum = subpackets |> Enum.map(&version_numbers_sum(&1)) |> Enum.sum()
+        vsn + subpackets_vsn_sum
+    end
   end
 end
