@@ -1,21 +1,10 @@
 defmodule Aoc2021.Day17 do
   def part1(input) do
-    {x_range, y_range} = target = parse(input)
-    {max_x, max_y} = farthest_point_from_source_in(target)
+    target = parse(input)
+    {initial_xs, initial_ys} = initial_starting_velocities(target)
 
-    valid_xs = (0..Enum.min(x_range)) |> Enum.to_list()
-    valid_xs = valid_xs ++ (0..Enum.max(x_range) |> Enum.to_list())
-    valid_xs = Enum.uniq(valid_xs)
-
-    max_abs_y = y_range |> Enum.map(&Kernel.abs/1) |> Enum.max
-    valid_ys = 0..max_abs_y |> Enum.to_list
-    valid_ys = valid_ys ++ (0..(-max_abs_y) |> Enum.to_list())
-    valid_ys = Enum.uniq(valid_xs)
-
-    # naive solution, for sure we can optimise this
-    # TODO: include more y, as it can go down!
     highest_ys =
-      for x_vel <- valid_xs, y_vel <- valid_ys do
+      for x_vel <- initial_xs, y_vel <- initial_ys do
         initial_velocity = {x_vel, y_vel}
         highest_y_if_hits(initial_velocity, target)
       end
@@ -26,7 +15,29 @@ defmodule Aoc2021.Day17 do
   end
 
   def part2(input) do
-    nil
+    target = parse(input)
+    {initial_xs, initial_ys} = initial_starting_velocities(target)
+
+    highest_ys =
+      for x_vel <- initial_xs, y_vel <- initial_ys do
+        initial_velocity = {x_vel, y_vel}
+        highest_y_if_hits(initial_velocity, target)
+      end
+
+    highest_ys
+    |> Enum.reject(&(&1 == nil))
+    |> Enum.count()
+  end
+
+  defp initial_starting_velocities({x_range, y_range} = _target) do
+    initial_xs = Enum.to_list(0..Enum.min(x_range))
+    initial_xs = initial_xs ++ (Enum.to_list(0..Enum.max(x_range)))
+
+    max_abs_y = y_range |> Enum.map(&Kernel.abs/1) |> Enum.max
+    initial_ys = Enum.to_list(0..max_abs_y)
+    initial_ys = initial_ys ++ Enum.to_list(0..(-max_abs_y))
+
+    {Enum.uniq(initial_xs), Enum.uniq(initial_ys)}
   end
 
   def highest_y_if_hits(initial_velocity, target) do
@@ -54,10 +65,6 @@ defmodule Aoc2021.Day17 do
   end
 
   defp hit?({x, y}, {x_range, y_range}), do: x in x_range and y in y_range
-
-  defp farthest_point_from_source_in({x_range, y_range}) do
-    {Enum.max_by(x_range, &Kernel.abs/1), Enum.max_by(y_range, &Kernel.abs/1)}
-  end
 
   def trajectory({_, _} = position \\ {0, 0}, {_, _} = velocity) do
     Stream.unfold(
