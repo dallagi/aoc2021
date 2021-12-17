@@ -13,7 +13,7 @@ defmodule Aoc2021.Day16Test do
   end
 
   test "decodes operator with length type 1" do
-    assert {{:operator, 7, 3, [{:literal, _, 1}, {:literal, _, 2}, {:literal, _, 3}]}} =
+    assert {{:operator, 7, 3, [{:literal, _, 1}, {:literal, _, 2}, {:literal, _, 3}]}, _} =
              "EE00D40C823060" |> Base.decode16!() |> Day16.decode()
   end
 end

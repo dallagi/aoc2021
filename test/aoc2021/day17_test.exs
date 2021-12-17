@@ -37,6 +37,5 @@ defmodule Aoc2021.Day17Test do
     initial_velocity
     |> Day17.trajectory()
     |> Enum.take(n)
-    |> Enum.map(fn {pos, _vel} -> pos end)
   end
 end
