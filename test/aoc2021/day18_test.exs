@@ -22,7 +22,7 @@ defmodule Aoc2021.Day18Test do
   end
 
   test "solves part2 for provided example" do
-    # assert nil == Day18.part2(@example_input)
+    assert 3993 == Day18.part2(@example_input)
   end
 
   test "determines which pair to explode" do

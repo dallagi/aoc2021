@@ -7,7 +7,13 @@ defmodule Aoc2021.Day18 do
   end
 
   def part2(input) do
-    nil
+    numbers = parse(input)
+
+    possible_pairs = for n1 <- numbers, n2 <- numbers, n1 != n2, do: {n1, n2}
+
+    possible_pairs
+    |> Enum.map(fn {n1, n2} -> n1 |> sum(n2) |> magnitude() end)
+    |> Enum.max()
   end
 
   def sum(num1, num2), do: reduce([reduce(num1), reduce(num2)])
