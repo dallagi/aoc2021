@@ -99,6 +99,13 @@ defmodule Aoc2021.Day19 do
   def distance(beacon1, beacon2),
     do: beacon1 |> Enum.zip(beacon2) |> Enum.map(fn {a, b} -> a - b end)
 
+
+  #####################################
+  #    GRAVEYARD OF FAILED ATTEMPTS   #
+  # kept here for my future amusement #
+  #####################################
+  #
+
   # def overlap(coords1, coords2, axis) do
   #   dist1 = axis_distribution(coords1, axis)
   #   dist2 = axis_distribution(coords2, axis)
