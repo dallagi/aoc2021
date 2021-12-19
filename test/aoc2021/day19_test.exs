@@ -8,7 +8,7 @@ defmodule Aoc2021.Day19Test do
   end
 
   test "solves part2 for provided example" do
-    # assert nil == Day19.part2(@example_input)
+    assert 3621 == Day19.part2(example_input())
   end
 
   # test "rotations" do

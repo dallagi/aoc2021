@@ -1,4 +1,10 @@
 defmodule Aoc2021.Day19 do
+
+  # ======== YOU SHOULD NOT LOOK AT THIS CODE ========== #
+  # It's slow and terrible. It works, but it also sucks. #
+  # I warned you.
+  # ==================================================== #
+
   @min_overlap 12
 
   def part1(input) do
@@ -10,21 +16,47 @@ defmodule Aoc2021.Day19 do
   end
 
   def part2(input) do
-    nil
+    scans = parse(input)
+    scanners = scanners_position(scans)
+
+    distances =
+      for [x1, y1, z1] <- scanners,
+          [x2, y2, z2] <- scanners,
+          do: abs(x1 - x2) + abs(y1 - y2) + abs(z1 - z2)
+
+    Enum.max(distances)
   end
 
   def merge_all([first_scan | scans]), do: merge_all(scans, first_scan)
 
   def merge_all([scan | other_scans], beacons_map) do
     case merge_normalized(beacons_map, scan) do
-      nil -> merge_all(other_scans ++ [scan], beacons_map)
-      res -> 
+      nil ->
+        merge_all(other_scans ++ [scan], beacons_map)
+
+      {new_map, _distance} ->
         IO.puts(".")
-        merge_all(other_scans, res)
+        merge_all(other_scans, new_map)
     end
   end
 
   def merge_all([], beacons_map), do: beacons_map
+
+  def scanners_position([first_scan | scans]),
+    do: scanners_position(scans, first_scan, [[0, 0, 0]])
+
+  def scanners_position([scan | other_scans], beacons_map, scanners) do
+    case merge_normalized(beacons_map, scan) do
+      nil ->
+        scanners_position(other_scans ++ [scan], beacons_map, scanners)
+
+      {new_map, distance} ->
+        IO.puts(".")
+        scanners_position(other_scans, new_map, [distance | scanners])
+    end
+  end
+
+  def scanners_position([], _, scanners), do: scanners
 
   def merge_normalized(scan1, scan2) do
     res =
@@ -45,7 +77,7 @@ defmodule Aoc2021.Day19 do
               Enum.map(scan2, fn [x, y, z] -> [x + dx, y + dy, z + dz] end)
 
             res = scan1 ++ scan2_relative_to_scan1
-            throw(Enum.uniq(res))
+            throw({Enum.uniq(res), [dx, dy, dz]})
           end
         end
       catch
