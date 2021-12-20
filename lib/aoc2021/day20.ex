@@ -1,5 +1,5 @@
 defmodule Aoc2021.Day20 do
-  @padding 2
+  @padding 1
 
   def part1(input) do
     {algorithm, image} = parse(input)
@@ -11,8 +11,20 @@ defmodule Aoc2021.Day20 do
   end
 
   def part2(input) do
-    nil
+    {algorithm, image} = parse(input)
+
+    image
+    |> enhance_n_times(algorithm, 50)
+    |> lit_pixels_count()
   end
+
+  def enhance_n_times(image, _, 0), do: image
+
+  def enhance_n_times(image, algorithm, n),
+    do:
+      image
+      |> enhance(algorithm)
+      |> enhance_n_times(algorithm, n - 1)
 
   def lit_pixels_count(%{image: image}),
     do: image |> Map.filter(fn {_, p} -> p == 1 end) |> Enum.count()
