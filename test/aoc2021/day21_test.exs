@@ -13,6 +13,6 @@ defmodule Aoc2021.Day21Test do
   end
 
   test "solves part2 for provided example" do
-    # assert nil == Day21.part2(@example_input)
+    assert 444356092776315 == Day21.part2(@example_input)
   end
 end
