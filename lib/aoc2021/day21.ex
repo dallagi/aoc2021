@@ -24,6 +24,7 @@ end
 
 defmodule Aoc2021.Day21 do
   @board_size 10
+  @three_sides_rolls Enum.frequencies(for d1 <- 1..3, d2 <- 1..3, d3 <- 1..3, do: d1 + d2 + d3)
 
   def part1(input) do
     DeterministicDice.start_link()
@@ -61,13 +62,11 @@ defmodule Aoc2021.Day21 do
           {0, 1}
 
         nil ->
-          possible_rolls = for d1 <- 1..3, d2 <- 1..3, d3 <- 1..3, do: d1 + d2 + d3
-
-          for roll <- possible_rolls, reduce: {0, 0} do
+          for {roll, frequency} <- @three_sides_rolls, reduce: {0, 0} do
             {total_p1_wins, total_p2_wins} ->
               game = play_turn(game, fn -> roll end)
               {p1_wins, p2_wins} = winning_universes(game, win_score)
-              {total_p1_wins + p1_wins, total_p2_wins + p2_wins}
+              {total_p1_wins + p1_wins * frequency, total_p2_wins + p2_wins * frequency}
           end
       end
       |> tap(&Memo.set(game, &1))
