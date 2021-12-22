@@ -1,31 +1,107 @@
 defmodule Aoc2021.Day22 do
   def part1(input) do
-    cube = for x <- -50..50, y <- -50..50, z <- -50..50, into: %{}, do: {{x, y, z}, 0}
+    # cube = for x <- -50..50, y <- -50..50, z <- -50..50, into: %{}, do: {{x, y, z}, 0}
 
-    cube =
-      input
-      |> parse
+    # cube =
+    #   input
+    #   |> parse
+    #   |> Enum.filter(fn {_action, ranges} ->
+    #     Enum.all?(ranges, fn rstart..rend -> rstart in -50..50 and rend in -50..50 end)
+    #   end)
+    #   |> Enum.reduce(
+    #     cube,
+    #     fn {action, [x_range, y_range, z_range]}, cube ->
+    #       Map.map(cube, fn {{x, y, z}, state} ->
+    #         if x in x_range and y in y_range and z in z_range,
+    #           do: action,
+    #           else: state
+    #       end)
+    #     end
+    #   )
+
+    # cube
+    # |> Map.values()
+    # |> Enum.count(&(&1 == 1))
+    input
+    |> parse
       |> Enum.filter(fn {_action, ranges} ->
         Enum.all?(ranges, fn rstart..rend -> rstart in -50..50 and rend in -50..50 end)
       end)
-      |> Enum.reduce(
-        cube,
-        fn {action, [x_range, y_range, z_range]}, cube ->
-          Map.map(cube, fn {{x, y, z}, state} ->
-            if x in x_range and y in y_range and z in z_range,
-              do: action,
-              else: state
-          end)
-        end
-      )
-
-    cube
-    |> Map.values()
-    |> Enum.count(&(&1 == 1))
+    |> cubes_on_after_init_procedure()
   end
 
   def part2(input) do
-    nil
+    input
+    |> parse
+    |> cubes_on_after_init_procedure()
+  end
+
+  def cubes_on_after_init_procedure(steps) do
+    {cubes_on_count, _} =
+      for {action, cube} <- Enum.reverse(steps),
+          reduce: {0, []} do
+        {cubes_on, previous_cubes} ->
+          case action do
+            0 ->
+              {cubes_on, [cube | previous_cubes]}
+
+            1 ->
+              new_cubes =
+                Enum.reduce(
+                  previous_cubes,
+                  [cube],
+                  fn prev_cube, cubes ->
+                    Enum.flat_map(cubes, &substract(&1, prev_cube))
+                  end
+                )
+
+              new_cubes_on = new_cubes |> Enum.map(&area/1) |> Enum.sum()
+              {new_cubes_on + cubes_on, [cube | previous_cubes]}
+          end
+      end
+
+    cubes_on_count
+  end
+
+  def area(axes) do
+    axes
+    |> Enum.map(&Range.size/1)
+    |> Enum.reduce(&Kernel.*/2)
+  end
+
+  def substract(cube, other_cube) do
+    intersection =
+      for {cube_range, other_range} <- Enum.zip(cube, other_cube),
+          do: range_intersection(cube_range, other_range)
+
+    if nil in intersection do
+      [cube]
+    else
+      [cube_x, cube_y, cube_z] = cube
+      [int_x, int_y, int_z] = intersection
+
+      for xr <- ranges(cube_x, int_x),
+          xr != nil,
+          yr <- ranges(cube_y, int_y),
+          yr != nil,
+          zr <- ranges(cube_z, int_z),
+          zr != nil,
+          cube = [xr, yr, zr],
+          cube != intersection,
+          do: cube
+    end
+  end
+
+  def ranges(r_from..r_to, i_from..i_to) do
+    [
+      if(r_from < i_from, do: r_from..(i_from - 1), else: nil),
+      i_from..i_to,
+      if(i_to < r_to, do: (i_to + 1)..r_to, else: nil)
+    ]
+  end
+
+  def range_intersection(from1..to1 = r1, from2..to2 = r2) do
+    if Range.disjoint?(r1, r2), do: nil, else: max(from1, from2)..min(to1, to2)
   end
 
   defp parse(input) do

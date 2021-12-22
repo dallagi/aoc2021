@@ -5,8 +5,8 @@ defmodule Aoc2021.Day17 do
 
     highest_ys =
       for x_vel <- initial_x_velocities,
-        y_vel <- initial_y_velocities,
-        do: highest_y_if_hits({x_vel, y_vel}, target)
+          y_vel <- initial_y_velocities,
+          do: highest_y_if_hits({x_vel, y_vel}, target)
 
     highest_ys
     |> Enum.reject(&(&1 == nil))
@@ -19,8 +19,8 @@ defmodule Aoc2021.Day17 do
 
     highest_ys =
       for x_vel <- initial_x_velocities,
-        y_vel <- initial_y_velocities,
-        do: highest_y_if_hits({x_vel, y_vel}, target)
+          y_vel <- initial_y_velocities,
+          do: highest_y_if_hits({x_vel, y_vel}, target)
 
     highest_ys
     |> Enum.reject(&(&1 == nil))
@@ -28,7 +28,8 @@ defmodule Aoc2021.Day17 do
   end
 
   defp initial_starting_velocities({x_range, y_range} = _target) do
-    initial_x_velocities = Enum.to_list(0..Enum.min(x_range)) ++ Enum.to_list(0..Enum.max(x_range))
+    initial_x_velocities =
+      Enum.to_list(0..Enum.min(x_range)) ++ Enum.to_list(0..Enum.max(x_range))
 
     max_abs_y = y_range |> Enum.map(&Kernel.abs/1) |> Enum.max()
     initial_y_velocities = Enum.to_list(0..max_abs_y) ++ Enum.to_list(0..-max_abs_y)

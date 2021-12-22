@@ -1,5 +1,4 @@
 defmodule Aoc2021.Day19 do
-
   # ======== YOU SHOULD NOT LOOK AT THIS CODE ========== #
   # It's slow and terrible. It works, but it also sucks. #
   # I warned you.
@@ -98,7 +97,6 @@ defmodule Aoc2021.Day19 do
 
   def distance(beacon1, beacon2),
     do: beacon1 |> Enum.zip(beacon2) |> Enum.map(fn {a, b} -> a - b end)
-
 
   #####################################
   #    GRAVEYARD OF FAILED ATTEMPTS   #
