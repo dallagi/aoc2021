@@ -11,31 +11,31 @@ defmodule Aoc2021.Day22Test do
     assert 2758514936282235 == Day22.part2(large_example_input())
   end
 
-  test "cubes substraction with cube superset of subcube" do
+  test "cubes subtraction with cube superset of subcube" do
     cube1 = [1..10, 1..10, 1..10]
-    assert area([cube1]) == 1000
+    assert volume([cube1]) == 1000
     subcube = [4..5, 4..5, 4..5]
 
-    res = Day22.substract(cube1, subcube)
-    assert area(res) == 1000 - 2 * 2 * 2
+    res = Day22.subtract(cube1, subcube)
+    assert volume(res) == 1000 - 2 * 2 * 2
   end
 
-  test "cubes substraction with disjoint cubes" do
+  test "cubes subtraction with disjoint cubes" do
     cube1 = [1..10, 1..10, 1..10]
-    assert area([cube1]) == 1000
+    assert volume([cube1]) == 1000
     subcube = [11..15, 11..15, 11..15]
 
-    res = Day22.substract(cube1, subcube)
-    assert area(res) == 1000
+    res = Day22.subtract(cube1, subcube)
+    assert volume(res) == 1000
   end
 
-  test "cubes substraction where cube is subcube of other" do
+  test "cubes subtraction where cube is subcube of other" do
     cube1 = [1..10, 1..10, 1..10]
-    assert area([cube1]) == 1000
+    assert volume([cube1]) == 1000
     subcube = [0..20, 0..20, 0..20]
 
-    res = Day22.substract(cube1, subcube)
-    assert area(res) == 0
+    res = Day22.subtract(cube1, subcube)
+    assert volume(res) == 0
   end
 
   test "ranges intersection" do
@@ -81,8 +81,8 @@ defmodule Aoc2021.Day22Test do
              ])
   end
 
-  defp area(cubes) do
-    cubes |> Enum.map(&Day22.area/1) |> Enum.sum()
+  defp volume(cubes) do
+    cubes |> Enum.map(&Day22.volume/1) |> Enum.sum()
   end
 
   defp small_example_input() do

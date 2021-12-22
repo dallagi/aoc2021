@@ -29,11 +29,11 @@ defmodule Aoc2021.Day22 do
                   previous_cubes,
                   [cube],
                   fn prev_cube, cubes ->
-                    Enum.flat_map(cubes, &substract(&1, prev_cube))
+                    Enum.flat_map(cubes, &subtract(&1, prev_cube))
                   end
                 )
 
-              new_cubes_on = new_cubes |> Enum.map(&area/1) |> Enum.sum()
+              new_cubes_on = new_cubes |> Enum.map(&volume/1) |> Enum.sum()
               {new_cubes_on + cubes_on, [cube | previous_cubes]}
           end
       end
@@ -41,13 +41,13 @@ defmodule Aoc2021.Day22 do
     cubes_on_count
   end
 
-  def area(axes) do
+  def volume(axes) do
     axes
     |> Enum.map(&Range.size/1)
     |> Enum.reduce(&Kernel.*/2)
   end
 
-  def substract(cube, other_cube) do
+  def subtract(cube, other_cube) do
     intersection =
       for {cube_range, other_range} <- Enum.zip(cube, other_cube),
           do: range_intersection(cube_range, other_range)
