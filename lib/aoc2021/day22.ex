@@ -1,32 +1,10 @@
 defmodule Aoc2021.Day22 do
   def part1(input) do
-    # cube = for x <- -50..50, y <- -50..50, z <- -50..50, into: %{}, do: {{x, y, z}, 0}
-
-    # cube =
-    #   input
-    #   |> parse
-    #   |> Enum.filter(fn {_action, ranges} ->
-    #     Enum.all?(ranges, fn rstart..rend -> rstart in -50..50 and rend in -50..50 end)
-    #   end)
-    #   |> Enum.reduce(
-    #     cube,
-    #     fn {action, [x_range, y_range, z_range]}, cube ->
-    #       Map.map(cube, fn {{x, y, z}, state} ->
-    #         if x in x_range and y in y_range and z in z_range,
-    #           do: action,
-    #           else: state
-    #       end)
-    #     end
-    #   )
-
-    # cube
-    # |> Map.values()
-    # |> Enum.count(&(&1 == 1))
     input
     |> parse
-      |> Enum.filter(fn {_action, ranges} ->
-        Enum.all?(ranges, fn rstart..rend -> rstart in -50..50 and rend in -50..50 end)
-      end)
+    |> Enum.filter(fn {_action, ranges} ->
+      Enum.all?(ranges, fn from..to -> from in -50..50 and to in -50..50 end)
+    end)
     |> cubes_on_after_init_procedure()
   end
 
