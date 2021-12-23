@@ -16,7 +16,7 @@ defmodule Aoc2021.Day23Test do
   end
 
   test "solves part2 for provided example" do
-    # assert nil == Day23.part2(@example_input)
+   assert 44169 == Day23.part2(@example_input)
   end
 
   test "an already-organized map costs nothing to reorder" do
@@ -39,7 +39,7 @@ defmodule Aoc2021.Day23Test do
       rooms: %{2 => ["A"], 4 => ["B", "B"], 6 => ["C", "C"], 8 => ["D", "D"]}
     }
 
-    assert 2 == Day23.least_energy_to_organize(map)
+    assert {2, _} = Day23.least_energy_to_organize(map, 2)
   end
 
   test "least energy to organize when one swap is necessary" do
@@ -51,7 +51,7 @@ defmodule Aoc2021.Day23Test do
     }
 
     # TODO check result 
-    assert 46 == Day23.least_energy_to_organize(map)
+    assert {46, _} = Day23.least_energy_to_organize(map, 2)
   end
 
   test "reachable_positions" do
@@ -70,7 +70,7 @@ defmodule Aoc2021.Day23Test do
              Day23.all_possible_moves(%{
                hallway: %{1 => "A"},
                rooms: %{2 => ["A"], 4 => ["B", "B"]}
-             })
+             }, 2)
   end
 
   test "cannot move amphipods already in destination place" do
@@ -78,34 +78,28 @@ defmodule Aoc2021.Day23Test do
              Day23.all_possible_moves(%{
                hallway: %{},
                rooms: %{2 => ["A", "A"], 4 => ["B", "B"], 6 => ["C", "C"], 8 => ["D", "D"]}
-             })
+             }, 2)
   end
 
   test "possible moves" do
-    assert [] == Day23.all_possible_moves(%{hallway: %{1 => "A", 3 => "B"}, rooms: %{2 => ["C"]}})
+    assert [] == Day23.all_possible_moves(%{hallway: %{1 => "A", 3 => "B"}, rooms: %{2 => ["C"]}}, 2)
 
     assert [
-             {3, %{hallway: %{0 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
-             {2, %{hallway: %{1 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
-             {2, %{hallway: %{3 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
-             {4, %{hallway: %{5 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
-             {6, %{hallway: %{7 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
-             {8, %{hallway: %{9 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
-             {50, %{hallway: %{0 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
-             {40, %{hallway: %{1 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
-             {20, %{hallway: %{3 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
-             {20, %{hallway: %{5 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
-             {40, %{hallway: %{7 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
-             {60, %{hallway: %{9 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}}
+              {3, %{hallway: %{0 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
+              {2, %{hallway: %{1 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
+              {2, %{hallway: %{3 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
+              {4, %{hallway: %{5 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
+              {6, %{hallway: %{7 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
+              {8, %{hallway: %{9 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
+              {9, %{hallway: %{10 => "A"}, rooms: %{2 => ["B"], 4 => ["B", "A"]}}},
+              {50, %{hallway: %{0 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
+              {40, %{hallway: %{1 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
+              {20, %{hallway: %{3 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
+              {20, %{hallway: %{5 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
+              {40, %{hallway: %{7 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
+              {60, %{hallway: %{9 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}},
+              {70, %{hallway: %{10 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}}
            ] =
-             Day23.all_possible_moves(%{hallway: %{}, rooms: %{2 => ["A", "B"], 4 => ["B", "A"]}})
-  end
-
-  test "all possible moves - debugging" do
-    assert [] ==
-             Day23.all_possible_moves(%{
-               hallway: %{5 => "B", 7 => "D"},
-               rooms: %{4 => ["C", "D"], 6 => ["C"]}
-             })
+             Day23.all_possible_moves(%{hallway: %{}, rooms: %{2 => ["A", "B"], 4 => ["B", "A"]}}, 2)
   end
 end
