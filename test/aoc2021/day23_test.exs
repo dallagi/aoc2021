@@ -50,7 +50,6 @@ defmodule Aoc2021.Day23Test do
       rooms: %{2 => ["B", "A"], 4 => ["A", "B"], 6 => ["C", "C"], 8 => ["D", "D"]}
     }
 
-    # TODO check result 
     assert {46, _} = Day23.least_energy_to_organize(map, 2)
   end
 

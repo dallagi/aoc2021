@@ -22,13 +22,6 @@ defmodule Aoc2021.Day23 do
       |> build_map()
       |> least_energy_to_organize(2)
 
-    # # ENABLE FOR DEBUG
-    # for {cost, map} <- steps do
-    #   IO.puts("Cost: #{res - cost}")
-    #   IO.puts("------")
-    #   print(map, 2)
-    # end
-
     res
   end
 
@@ -222,15 +215,14 @@ defmodule Aoc2021.Day23 do
     |> Enum.map(&Tuple.to_list/1)
   end
 
+  # Prints map the same format as in the instruction
+  # useful for debugging purposes
   defp print(%{hallway: hallway, rooms: rooms}, room_size) do
     IO.puts("#############")
-    # HALLWAY
     IO.write("#")
-
     for i <- 0..(@hallway_size - 1) do
       IO.write(Map.get(hallway, i, "."))
     end
-
     IO.write("#\n")
 
     for depth <- 0..(room_size - 1) do
