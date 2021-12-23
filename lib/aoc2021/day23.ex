@@ -26,7 +26,7 @@ defmodule Aoc2021.Day23 do
     for {cost, map} <- steps do
       IO.puts("Cost: #{res - cost}")
       IO.puts("------")
-      print(map)
+      print(map, 2)
     end
 
     res
@@ -203,7 +203,7 @@ defmodule Aoc2021.Day23 do
     |> Enum.map(&Tuple.to_list/1)
   end
 
-  defp print(%{hallway: hallway, rooms: rooms}) do
+  defp print(%{hallway: hallway, rooms: rooms}, room_size) do
     IO.puts("#############")
     # HALLWAY
     IO.write("#")
@@ -213,27 +213,22 @@ defmodule Aoc2021.Day23 do
     end
 
     IO.write("#\n")
-    # FIRST ROW
-    IO.write("###")
 
-    for pos <- [2, 4, 6, 8] do
-      case rooms[pos] do
-        [a, _] -> IO.write(a <> "#")
-        _ -> IO.write(".#")
+    for depth <- 0..(room_size - 1) do
+      IO.write("###")
+
+      for pos <- [2, 4, 6, 8] do
+        room = rooms[pos]
+
+        case Enum.at(room, depth) do
+          nil -> IO.write(".#")
+          a -> IO.write(a <> "#")
+        end
       end
+
+      IO.write("##\n")
     end
 
-    IO.write("##\n###")
-    # SECOND ROW
-    for pos <- [2, 4, 6, 8] do
-      case rooms[pos] do
-        [_, a] -> IO.write(a <> "#")
-        [a] -> IO.write(a <> "#")
-        [] -> IO.write(".#")
-      end
-    end
-
-    IO.write("##\n")
     IO.puts("  #########  ")
   end
 end
