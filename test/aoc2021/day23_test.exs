@@ -12,7 +12,7 @@ defmodule Aoc2021.Day23Test do
   """
 
   test "solves part1 for provided example" do
-    assert 12521 == Day23.part1(@example_input)
+    assert 12521 == Day23.part1(@example_input) |> IO.inspect(pretty: true)
   end
 
   test "solves part2 for provided example" do
@@ -30,18 +30,6 @@ defmodule Aoc2021.Day23Test do
 
     assert 0 == Day23.part1(organized_map)
   end
-
-  #test "two swaps" do
-  #  map = """
-  #  #############
-  #  #...........#
-  #  ###B#A#D#C###
-  #    #A#B#C#D#
-  #    #########
-  #  """
-
-  #  assert 0 == Day23.part1(map)
-  #end
 
   test "least energy to organize when only one step is necessary" do
     Day23Memo.start_link()
@@ -66,23 +54,15 @@ defmodule Aoc2021.Day23Test do
     assert 46 == Day23.least_energy_to_organize(map)
   end
 
-  # test "least energy to organize when two swaps are necessary" do
-  #   Day23Memo.start_link()
-
-  #   map = %{
-  #     hallway: %{},
-  #     rooms: %{2 => ["B", "A"], 4 => ["A", "B"], 6 => ["D", "C"], 8 => ["C", "D"]}
-  #   }
-
-  #   # TODO check result 
-  #   assert 46 == Day23.least_energy_to_organize(map)
-  # end
-
   test "reachable_positions" do
-    assert MapSet.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) == Day23.reachable_positions_from(%{}, 2)
+    assert MapSet.new([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) ==
+             Day23.reachable_positions_from(%{}, 2)
+
     assert MapSet.new([0, 1, 2, 3]) == Day23.reachable_positions_from(%{4 => "A"}, 2)
     assert MapSet.new([2, 3]) == Day23.reachable_positions_from(%{1 => "B", 4 => "A"}, 2)
+    assert MapSet.new([0, 1, 2, 3, 4]) == Day23.reachable_positions_from(%{5 => "B", 7 => "D"}, 4)
     assert MapSet.new([]) == Day23.reachable_positions_from(%{2 => "A"}, 2)
+    assert MapSet.new([]) == Day23.reachable_positions_from(%{5 => "D", 7 => "B"}, 7)
   end
 
   test "possible moves forces amphipod from hallway into their room when possible" do
@@ -119,5 +99,13 @@ defmodule Aoc2021.Day23Test do
              {60, %{hallway: %{9 => "B"}, rooms: %{2 => ["A", "B"], 4 => ["A"]}}}
            ] =
              Day23.all_possible_moves(%{hallway: %{}, rooms: %{2 => ["A", "B"], 4 => ["B", "A"]}})
+  end
+
+  test "all possible moves - debugging" do
+    assert [] ==
+             Day23.all_possible_moves(%{
+               hallway: %{5 => "B", 7 => "D"},
+               rooms: %{4 => ["C", "D"], 6 => ["C"]}
+             })
   end
 end

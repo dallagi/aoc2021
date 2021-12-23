@@ -8,7 +8,7 @@ end
 
 defmodule Aoc2021.Day23 do
   @destination_room %{"A" => 2, "B" => 4, "C" => 6, "D" => 8}
-  @hallway_size 10
+  @hallway_size 11
   @reachable_hallway 0..(@hallway_size - 1)
                      |> Enum.to_list()
                      |> Kernel.--(Map.values(@destination_room))
@@ -16,33 +16,46 @@ defmodule Aoc2021.Day23 do
   def part1(input) do
     Day23Memo.start_link()
 
-    input
-    |> parse()
-    |> build_map()
-    |> least_energy_to_organize()
+    {res, steps} =
+      input
+      |> parse()
+      |> build_map()
+      |> least_energy_to_organize()
+      |> IO.inspect()
+
+    for {cost, map} <- steps do
+      IO.puts("Cost: #{res - cost}")
+      IO.puts("------")
+      print(map)
+    end
+
+    res
   end
 
   def part2(input) do
     nil
   end
 
-  def least_energy_to_organize(%{hallway: hallway, rooms: rooms} = map) do
+  def least_energy_to_organize(%{hallway: _hallway, rooms: rooms} = map, steps \\ []) do
     cond do
       res = Day23Memo.get(map) ->
         res
 
       organized?(rooms) ->
-        0
+        {0, []}
 
       true ->
         map
         |> all_possible_moves()
-          |> Enum.map(fn {cost, new_map} ->
-            new_cost = least_energy_to_organize(new_map)
-            if new_cost, do: cost + new_cost
-          end)
+        |> Enum.map(fn
+          {cost, new_map} ->
+            case least_energy_to_organize(new_map, steps) do
+              {new_cost, steps} -> {cost + new_cost, [{cost + new_cost, new_map} | steps]}
+              nil -> nil
+            end
+        end)
         |> Enum.reject(&(&1 == nil))
-        |> Enum.min(fn -> nil end)
+        |> Enum.min_by(fn {cost, _steps} -> cost end, fn -> nil end)
     end
     |> tap(fn res -> Day23Memo.set(map, res) end)
   end
@@ -59,23 +72,27 @@ defmodule Aoc2021.Day23 do
       destination_room_position = @destination_room[amphipod]
       destination_room = rooms[destination_room_position]
 
-      case destination_room do
-        [] ->
-          {(2 + abs(position - destination_room_position)) * step_cost(amphipod),
-           %{
-             hallway: Map.delete(hallway, position),
-             rooms: Map.put(rooms, destination_room_position, [amphipod])
-           }}
+      rest_of_hallway = Map.delete(hallway, position)
 
-        [^amphipod] ->
-          {(1 + abs(position - destination_room_position)) * step_cost(amphipod),
-           %{
-             hallway: Map.delete(hallway, position),
-             rooms: Map.put(rooms, destination_room_position, [amphipod, amphipod])
-           }}
+      if destination_room_position in reachable_positions_from(rest_of_hallway, position) do
+        case destination_room do
+          [] ->
+            {(2 + abs(position - destination_room_position)) * step_cost(amphipod),
+             %{
+               hallway: Map.delete(hallway, position),
+               rooms: Map.put(rooms, destination_room_position, [amphipod])
+             }}
 
-        _ ->
-          nil
+          [^amphipod] ->
+            {(1 + abs(position - destination_room_position)) * step_cost(amphipod),
+             %{
+               hallway: Map.delete(hallway, position),
+               rooms: Map.put(rooms, destination_room_position, [amphipod, amphipod])
+             }}
+
+          _ ->
+            nil
+        end
       end
     end
     |> Enum.reject(&(&1 == nil))
@@ -135,17 +152,17 @@ defmodule Aoc2021.Day23 do
   end
 
   def reachable_positions_from(hallway, position) do
-    occupied_hallway = Map.keys(hallway) |> Enum.sort()
+    occupied_hallway = Map.keys(hallway)
 
-    {starting_position, ending_position} =
-      for occupied_position <- occupied_hallway, reduce: {-1, @hallway_size} do
-        {lower, higher} ->
-          cond do
-            occupied_position < position -> {occupied_position, higher}
-            occupied_position > position -> {lower, occupied_position}
-            true -> {occupied_position, occupied_position}
-          end
-      end
+    starting_position =
+      occupied_hallway
+      |> Enum.filter(&(&1 <= position))
+      |> Enum.max(fn -> -1 end)
+
+    ending_position =
+      occupied_hallway
+      |> Enum.filter(&(&1 >= position))
+      |> Enum.min(fn -> @hallway_size end)
 
     reachable_positions =
       for position <- 0..(@hallway_size - 1),
@@ -153,6 +170,7 @@ defmodule Aoc2021.Day23 do
         position
       end
 
+    # MapSet.new((starting_position + 1)..(ending_position-1))
     MapSet.new(reachable_positions)
   end
 
@@ -183,5 +201,39 @@ defmodule Aoc2021.Day23 do
     first_amphipods
     |> Enum.zip(second_amphipods)
     |> Enum.map(&Tuple.to_list/1)
+  end
+
+  defp print(%{hallway: hallway, rooms: rooms}) do
+    IO.puts("#############")
+    # HALLWAY
+    IO.write("#")
+
+    for i <- 0..(@hallway_size - 1) do
+      IO.write(Map.get(hallway, i, "."))
+    end
+
+    IO.write("#\n")
+    # FIRST ROW
+    IO.write("###")
+
+    for pos <- [2, 4, 6, 8] do
+      case rooms[pos] do
+        [a, _] -> IO.write(a <> "#")
+        _ -> IO.write(".#")
+      end
+    end
+
+    IO.write("##\n###")
+    # SECOND ROW
+    for pos <- [2, 4, 6, 8] do
+      case rooms[pos] do
+        [_, a] -> IO.write(a <> "#")
+        [a] -> IO.write(a <> "#")
+        [] -> IO.write(".#")
+      end
+    end
+
+    IO.write("##\n")
+    IO.puts("  #########  ")
   end
 end
