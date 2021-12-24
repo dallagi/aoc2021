@@ -13,6 +13,53 @@ defmodule Aoc2021.Day24Test do
     # assert nil == Day24.part2(@example_input)
   end
 
+  test "xxx" do
+    Memo.start_link()
+    IO.puts("a")
+    program_parts = "24" |> Aoc2021.input_for() |> Day24.parse() |> Day24.split_at_inps()
+
+    IO.puts("a")
+
+    assert [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] ==
+             Day24.highest_valid_model_number(
+               program_parts,
+               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+               0,
+               14
+             )
+
+    IO.puts("a")
+
+    assert [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2] ==
+             Day24.highest_valid_model_number(
+               program_parts,
+               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+               7,
+               13
+             )
+
+    IO.puts("a")
+    IO.puts("========")
+    IO.puts("========")
+    IO.puts("========")
+    IO.puts("========")
+
+    assert [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2] ==
+             Day24.highest_valid_model_number(
+               program_parts,
+               [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+               14,
+               12
+             )
+  end
+
+  test "success" do
+    program = "24" |> Aoc2021.input_for() |> Day24.parse()
+
+    assert {:ok, %{"z" => 0}} =
+             Day24.run(program, Enum.reverse([3, 1, 1, 4, 1, 4, 1, 7, 1, 1, 3, 9, 6, 1]))
+  end
+
   test "simple ALU program" do
     program = """
     inp x
