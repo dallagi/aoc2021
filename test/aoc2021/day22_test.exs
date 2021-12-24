@@ -8,7 +8,7 @@ defmodule Aoc2021.Day22Test do
   end
 
   test "solves part2 for provided example" do
-    assert 2758514936282235 == Day22.part2(large_example_input())
+    assert 2_758_514_936_282_235 == Day22.part2(large_example_input())
   end
 
   test "cubes subtraction with cube superset of subcube" do

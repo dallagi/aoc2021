@@ -16,7 +16,7 @@ defmodule Aoc2021.Day23 do
   def part1(input) do
     Day23Memo.start_link()
 
-    {res, steps} =
+    {res, _steps} =
       input
       |> parse()
       |> build_map()
@@ -28,7 +28,7 @@ defmodule Aoc2021.Day23 do
   def part2(input) do
     Day23Memo.start_link()
 
-    {res, steps} =
+    {res, _steps} =
       input
       |> parse()
       |> build_map()
@@ -220,9 +220,11 @@ defmodule Aoc2021.Day23 do
   defp print(%{hallway: hallway, rooms: rooms}, room_size) do
     IO.puts("#############")
     IO.write("#")
+
     for i <- 0..(@hallway_size - 1) do
       IO.write(Map.get(hallway, i, "."))
     end
+
     IO.write("#\n")
 
     for depth <- 0..(room_size - 1) do
