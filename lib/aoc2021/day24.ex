@@ -46,7 +46,7 @@ defmodule Aoc2021.Day24 do
 
       true ->
         valid_numbers =
-          for digit <- 9..1 do
+          for digit <- 1..9 do
             program = Enum.at(program_parts, prefix_length + 1)
 
             case run(program, [digit], %{"z" => z}) do
