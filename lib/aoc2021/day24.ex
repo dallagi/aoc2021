@@ -15,20 +15,34 @@ defmodule Aoc2021.Day24 do
   def part1(input) do
     Memo.start_link()
 
-    IO.inspect(@steps_that_can_lower_z)
-
-    program =
-      input
-      |> parse
-      |> split_at_inps()
-      |> highest_valid_model_number()
+    input
+    |> parse
+    |> split_at_inps()
+    |> valid_model_number_by(:highest)
   end
 
   def part2(input) do
-    nil
+    Memo.start_link()
+
+    input
+    |> parse
+    |> split_at_inps()
+    |> valid_model_number_by(:lowest)
   end
 
-  def highest_valid_model_number(program_parts, prefix \\ [], z \\ 0, prefix_length \\ 0) do
+  def valid_model_number_by(
+        program_parts,
+        highest_or_lowest,
+        prefix \\ [],
+        z \\ 0,
+        prefix_length \\ 0
+      ) do
+    digits_to_consider =
+      case highest_or_lowest do
+        :highest -> 9..1
+        :lowest -> 1..9
+      end
+
     cond do
       res = Memo.get({prefix_length, z}) != nil ->
         res
@@ -46,13 +60,14 @@ defmodule Aoc2021.Day24 do
 
       true ->
         valid_numbers =
-          for digit <- 1..9 do
+          for digit <- digits_to_consider do
             program = Enum.at(program_parts, prefix_length + 1)
 
             case run(program, [digit], %{"z" => z}) do
               {:ok, %{"z" => new_z}} ->
-                highest_valid_model_number(
+                valid_model_number_by(
                   program_parts,
+                  highest_or_lowest,
                   [digit | prefix],
                   new_z,
                   prefix_length + 1
